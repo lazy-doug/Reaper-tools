@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <index version="1" name="Lazy-Doug ReaPack Repo">
-    <category name="Utility">
+    <category name="Midi Actions">
         <reapack name="Relative Midi Action Pairs" type="script">
-
+            <version name="1.0.0">
+                <source main="main" file="Relative Midi Action Pairs Config.lua">https://raw.githubusercontent.com/lazy-doug/Reaper-tools/refs/heads/main/Relative%20Midi%20Action%20Pairs/Relative%20Midi%20Action%20Pairs%20Config.lua</source>
+                <source main="main" file="Relative Midi Action Pairs Trigger.lua">https://raw.githubusercontent.com/lazy-doug/Reaper-tools/refs/heads/main/Relative%20Midi%20Action%20Pairs/Relative%20Midi%20Action%20Pairs%20Trigger.lua</source>
+                <source file="Relative Midi Action Pairs Main.lua">https://raw.githubusercontent.com/lazy-doug/Reaper-tools/refs/heads/main/Relative%20Midi%20Action%20Pairs/Relative%20Midi%20Action%20Pairs%20Main.lua</source>
+            </version>
         </reapack>
     </category>
 </index>

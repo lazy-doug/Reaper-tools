@@ -4,4 +4,4 @@
 
 Copy and paste this link into: Extensions > ReaPack > Import a repository
 
-    https://github.com/lazy-doug/Reaper-tools/edit/main/index.xml
+    https://raw.githubusercontent.com/lazy-doug/Reaper-tools/main/index.xml

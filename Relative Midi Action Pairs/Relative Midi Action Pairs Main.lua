@@ -1,5 +1,7 @@
 -- Package: Relative Midi Action Pairs
 -- Fires different actions for each relative CC direction
+-- @noindex
+
 
 
 local EXTSECTION = "Relative_CC_Toolkit"
