@@ -192,7 +192,7 @@ end
 return function(mode)
   if mode == "config" then
     config_gui()
-  elseif mode == "handler" then
+  elseif mode == "trigger" then
     handle_midi()
   end
 end
