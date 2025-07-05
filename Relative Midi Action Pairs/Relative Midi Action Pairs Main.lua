@@ -15,13 +15,13 @@ local function load_config()
   local count = tonumber(reaper.GetExtState(EXTSECTION, "count")) or 0
   for i = 1, count do
     local line = reaper.GetExtState(EXTSECTION, tostring(i))
-    local cc, chan, inc, dec = line:match("CC=(%d+),CHAN=(%d+),INC=(%d+),DEC=(%d+)")
+    local cc, chan, inc, dec = line:match("CC=(%d+),CHAN=(%d+),INC=([^,]+),DEC=([^,]+)")
     if cc and chan and inc and dec then
       local cfg = {
         cc = tonumber(cc),
         chan = tonumber(chan),
-        inc = tonumber(inc),
-        dec = tonumber(dec)
+        inc = tostring(inc),
+        dec = tostring(dec)
       }
       table.insert(configs, cfg)
       lookup[cfg.cc .. ":" .. cfg.chan] = cfg
@@ -39,7 +39,7 @@ local function save_config(configs)
   reaper.DeleteExtState(EXTSECTION, "count", true)
   for i = 1, #configs do
     local cfg = configs[i]
-    local line = string.format("CC=%d,CHAN=%d,INC=%d,DEC=%d", cfg.cc, cfg.chan, cfg.inc, cfg.dec)
+    local line = string.format("CC=%d,CHAN=%d,INC=%s,DEC=%s", cfg.cc, cfg.chan, tostring(cfg.inc), tostring(cfg.dec))
     reaper.SetExtState(EXTSECTION, tostring(i), line, true)
   end
   reaper.SetExtState(EXTSECTION, "count", tostring(#configs), true)
@@ -59,13 +59,9 @@ local function config_gui()
   local new_entry = { cc = 0, chan = 1, inc = 0, dec = 0 }
 
   local function get_action_name(cmd)
-    local name = reaper.ReverseNamedCommandLookup(cmd)
-    if name and name ~= "" then
-      return name
-    else
-      local name = reaper.kbd_getTextFromCmd(cmd, 0)
-      return (name ~= "") and name or "(Unknown)"
-    end
+    local numeric_cmd = reaper.NamedCommandLookup(cmd) or cmd
+    local name = reaper.kbd_getTextFromCmd(numeric_cmd, 0)
+    return (name ~= "") and name or "(Unknown)"
   end
 
   local function loop()
@@ -116,12 +112,12 @@ local function config_gui()
         _, new_entry.cc = reaper.ImGui_InputInt(ctx, '##new_cc', new_entry.cc)
         reaper.ImGui_TableSetColumnIndex(ctx, 2)
         reaper.ImGui_SetNextItemWidth(ctx, -1)
-        _, new_entry.dec = reaper.ImGui_InputInt(ctx, '##new_dec', new_entry.dec)
+        _, new_entry.dec = reaper.ImGui_InputText(ctx, '##new_dec', new_entry.dec)
         reaper.ImGui_TableSetColumnIndex(ctx, 3)
         reaper.ImGui_Text(ctx, get_action_name(new_entry.dec))
         reaper.ImGui_TableSetColumnIndex(ctx, 4)
         reaper.ImGui_SetNextItemWidth(ctx, -1)
-        _, new_entry.inc = reaper.ImGui_InputInt(ctx, '##new_inc', new_entry.inc)
+        _, new_entry.inc = reaper.ImGui_InputText(ctx, '##new_inc', new_entry.inc)
         reaper.ImGui_TableSetColumnIndex(ctx, 5)
         reaper.ImGui_Text(ctx, get_action_name(new_entry.inc))
         reaper.ImGui_TableSetColumnIndex(ctx, 6)
@@ -177,12 +173,16 @@ local function handle_midi()
   local key = cc .. ":" .. chan
 
   local cfg = CONFIG_LOOKUP[key]
+
   if not cfg then return end
 
+
   if val > 0 then
-    reaper.Main_OnCommand(cfg.inc, 0)
+    local numeric_cmd = reaper.NamedCommandLookup(cfg.inc) or cfg.inc
+    reaper.Main_OnCommand(numeric_cmd, 0)
   elseif val < 0 then
-    reaper.Main_OnCommand(cfg.dec, 0)
+    local numeric_cmd = reaper.NamedCommandLookup(cfg.dec) or cfg.inc
+    reaper.Main_OnCommand(numeric_cmd, 0)
   end
 end
 
