@@ -9,10 +9,11 @@
             </version>
             <version name="1.1.0" author="Lazy-Doug">
                 <changelog><![CDATA[- Add text action ID support
-- Add table record editing]]></changelog>
+- Add table record editing
+- Add toolbar GUI button state]]></changelog>
                 <source main="main" file="Relative Midi Action Pairs Config.lua">https://raw.githubusercontent.com/lazy-doug/Reaper-tools/0d2a9b2095833eda2f8bb880bb0c3d5f92db22f5/Relative%20Midi%20Action%20Pairs/Relative%20Midi%20Action%20Pairs%20Config.lua</source>
                 <source main="main" file="Relative Midi Action Pairs Trigger.lua">https://raw.githubusercontent.com/lazy-doug/Reaper-tools/0d2a9b2095833eda2f8bb880bb0c3d5f92db22f5/Relative%20Midi%20Action%20Pairs/Relative%20Midi%20Action%20Pairs%20Trigger.lua</source>
-                <source file="Relative Midi Action Pairs Main.lua">https://raw.githubusercontent.com/lazy-doug/Reaper-tools/0d2a9b2095833eda2f8bb880bb0c3d5f92db22f5/Relative%20Midi%20Action%20Pairs/Relative%20Midi%20Action%20Pairs%20Main.lua</source>
+                <source file="Relative Midi Action Pairs Main.lua">https://raw.githubusercontent.com/lazy-doug/Reaper-tools/dbf7251d3bef4774986c9bf8a6e9b4326724110d/Relative%20Midi%20Action%20Pairs/Relative%20Midi%20Action%20Pairs%20Main.lua</source>
             </version>
         </reapack>
     </category>
