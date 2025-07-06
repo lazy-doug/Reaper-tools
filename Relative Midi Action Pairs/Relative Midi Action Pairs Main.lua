@@ -49,6 +49,7 @@ end
 -- GUI CONFIG FUNCTION
 ------------------------------------------------
 local function config_gui()
+  local _, _, sectionID, cmdID = reaper.get_action_context()
   local ctx = reaper.ImGui_CreateContext('Relative CC Config')
   local FONT_SIZE = reaper.GetOS():match('Win') and 14 or 16
   local FONT = reaper.ImGui_CreateFont('sans-serif', FONT_SIZE)
@@ -195,7 +196,15 @@ local function config_gui()
       reaper.ImGui_PopFont(ctx)
       reaper.ImGui_End(ctx)
     end
-    if open then reaper.defer(loop) end
+    if open then
+      reaper.SetToggleCommandState(sectionID, cmdID, 1)
+      reaper.RefreshToolbar2(sectionID, cmdID)
+      reaper.defer(loop)
+    else
+      -- Reset toggle when window closes
+      reaper.SetToggleCommandState(sectionID, cmdID, 0)
+      reaper.RefreshToolbar2(sectionID, cmdID)
+    end
   end
 
   loop()
