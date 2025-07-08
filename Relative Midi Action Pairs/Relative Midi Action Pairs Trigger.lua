@@ -1,10 +1,9 @@
 -- @description Relative Midi Action Pairs Trigger
--- @version 1.2
+-- @version 1.3
 -- @author Lazy Doug
 -- @license MIT
 -- @changelog
---   + Refactor
---   + Optimization
+--   + Trigger optimization
 -- @about
 --   # Relative CC MIDI Handler
 --   Routes incoming MIDI CC from encoders to Reaper actions according to config.
@@ -14,52 +13,77 @@
 
 
 
-local EXTSECTION = "Relative_CC_Toolkit"
+------------------------------------------------
+-- Lib import
+------------------------------------------------
+local script_path           = debug.getinfo(1, "S").source:match("@(.*[\\/])")
+package.path                = package.path .. ";" .. script_path .. "lib/?.lua"
+local json                  = require "json"
 
-local function load_config()
-  local lookup = {}
-  local count = tonumber(reaper.GetExtState(EXTSECTION, "count")) or 0
-  for i = 1, count do
-    local line = reaper.GetExtState(EXTSECTION, tostring(i))
-    local cc, chan, inc, dec = line:match("CC=(%d+),CHAN=(%d+),INC=([^,]+),DEC=([^,]+)")
-    if cc and chan and inc and dec then
-      local cfg = {
-        cc = tonumber(cc),
-        chan = tonumber(chan),
-        inc = tostring(inc),
-        dec = tostring(dec)
-      }
-      lookup[cfg.cc .. ":" .. cfg.chan] = cfg
-    end
+------------------------------------------------
+-- Constants
+------------------------------------------------
+
+local CONFIG_CH_EXT_SECTION = "Lazy-Doug RMAP config"
+
+local CACHED_CONFIG         = {}
+
+
+local function check_cache(ch, cc)
+  return CACHED_CONFIG.ch == ch and CACHED_CONFIG.cc == cc and CACHED_CONFIG.commands
+end
+
+local function update_cache(ch, cc, commands)
+  CACHED_CONFIG.ch = ch
+  CACHED_CONFIG.cc = cc
+  CACHED_CONFIG.commands = commands
+end
+
+local function load_config(ch, cc)
+  local channelConfig = reaper.GetExtState(CONFIG_CH_EXT_SECTION, tostring(ch))
+  if not channelConfig then return end
+  local ok, ccData = pcall(json.decode, channelConfig)
+
+  if ok and type(ccData) == "table" then
+    local commands = ccData[tostring(cc)]
+    update_cache(ch, cc, commands)
+
+    return commands
+  end
+end
+
+
+local function listener()
+  local _, _, _, _, mode, _, val, context = reaper.get_action_context()
+  if mode <= 0 or not context:match("^midi") then return end
+  if val == 0 then return end
+
+  local status_hex, cc_hex = context:match("midi:(%x+):(%x+)")
+  if not status_hex or not cc_hex then return end
+
+  local status = tonumber(status_hex, 16)
+  if (status & 0xF0) ~= 0xB0 then return end
+
+  local ch = (status & 0x0F) + 1
+  local cc = tonumber(cc_hex, 16)
+
+  local in_cache = check_cache(ch, cc)
+  reaper.ShowConsoleMsg(tostring(in_cache) .. "\n")
+
+  local commands = check_cache(ch, cc) and CACHED_CONFIG.commands or load_config(ch, cc)
+
+  if not commands then return end
+
+  if val > 0 then
+    local numeric_cmd = reaper.NamedCommandLookup(commands.inc) or commands.inc
+    reaper.Main_OnCommand(numeric_cmd, 0)
+  elseif val < 0 then
+    local numeric_cmd = reaper.NamedCommandLookup(commands.dec) or commands.inc
+    reaper.Main_OnCommand(numeric_cmd, 0)
   end
 
-  return lookup
+
+  reaper.defer(listener)
 end
 
-
-local _, _, _, _, mode, _, val, context = reaper.get_action_context()
-if mode <= 0 or not context:match("^midi") then return end
-if val == 0 then return end
-
-local status_hex, cc_hex = context:match("midi:(%x+):(%x+)")
-if not status_hex or not cc_hex then return end
-
-local status = tonumber(status_hex, 16)
-if (status & 0xF0) ~= 0xB0 then return end
-
-local cc = tonumber(cc_hex, 16)
-local chan = (status & 0x0F) + 1
-local key = cc .. ":" .. chan
-
-local CONFIG_LOOKUP = load_config()
-local cfg = CONFIG_LOOKUP[key]
-
-if not cfg then return end
-
-if val > 0 then
-  local numeric_cmd = reaper.NamedCommandLookup(cfg.inc) or cfg.inc
-  reaper.Main_OnCommand(numeric_cmd, 0)
-elseif val < 0 then
-  local numeric_cmd = reaper.NamedCommandLookup(cfg.dec) or cfg.inc
-  reaper.Main_OnCommand(numeric_cmd, 0)
-end
+listener()
