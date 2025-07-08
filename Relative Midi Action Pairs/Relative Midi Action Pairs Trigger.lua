@@ -67,9 +67,6 @@ local function listener()
   local ch = (status & 0x0F) + 1
   local cc = tonumber(cc_hex, 16)
 
-  local in_cache = check_cache(ch, cc)
-  reaper.ShowConsoleMsg(tostring(in_cache) .. "\n")
-
   local commands = check_cache(ch, cc) and CACHED_CONFIG.commands or load_config(ch, cc)
 
   if not commands then return end
