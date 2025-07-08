@@ -29,6 +29,7 @@
                 <changelog><![CDATA[- Trigger action optimization]]></changelog>
                 <source main="main" file="Relative Midi Action Pairs Config.lua">https://raw.githubusercontent.com/lazy-doug/Reaper-tools/ed76e9528eadacc1f48ff1ff2584ce1887e0bb5d/Relative%20Midi%20Action%20Pairs/Relative%20Midi%20Action%20Pairs%20Config.lua</source>
                 <source main="main" file="Relative Midi Action Pairs Trigger.lua">https://raw.githubusercontent.com/lazy-doug/Reaper-tools/ed76e9528eadacc1f48ff1ff2584ce1887e0bb5d/Relative%20Midi%20Action%20Pairs/Relative%20Midi%20Action%20Pairs%20Trigger.lua</source>
+                <source file="lib/json.lua">https://raw.githubusercontent.com/lazy-doug/Reaper-tools/3c25d157a66b8d4d5d5c9c107cec50700ae1e0b6/Relative%20Midi%20Action%20Pairs/lib/json.lua</source>
             </version>
         </reapack>
     </category>
