@@ -1,9 +1,9 @@
 -- @description Relative Midi Action Pairs GUI Config
--- @version 1.3
+-- @version 1.4
 -- @author Lazy Doug
 -- @license MIT
 -- @changelog
---   + Trigger optimization
+--   + Config green theme
 -- @about
 --   # Relative CC Config GUI
 --   Graphical interface to configure MIDI CC routing and relative encoder behavior.
@@ -123,6 +123,64 @@ end
 ------------------------------------------------
 -- GUI CONFIG
 ------------------------------------------------
+
+function apply_theme(ctx)
+  local PushColor = reaper.ImGui_PushStyleColor
+
+  local base      = 0X176E65FF -- #176e65
+  local hover     = 0X25886EFF -- #25886e
+  local active    = 0X135D59FF -- #135d59
+
+  local bg_dark   = 0x2F2F2FFF -- #2A2A2A
+  local bg_popup  = 0x333333FF -- #333333 with slight transparency
+  local header_bg = 0x364F44FF -- dark-muted green blend
+
+  local gray      = 0x5A5A5AFF -- lighter gray border
+  local text      = 0xE0FFF5FF -- soft white-green tint
+
+  PushColor(ctx, reaper.ImGui_Col_Text(), text)
+  PushColor(ctx, reaper.ImGui_Col_WindowBg(), bg_dark)
+  PushColor(ctx, reaper.ImGui_Col_Border(), gray)
+
+  PushColor(ctx, reaper.ImGui_Col_Button(), base)
+  PushColor(ctx, reaper.ImGui_Col_ButtonHovered(), hover)
+  PushColor(ctx, reaper.ImGui_Col_ButtonActive(), active)
+
+  PushColor(ctx, reaper.ImGui_Col_FrameBg(), base)
+  PushColor(ctx, reaper.ImGui_Col_FrameBgHovered(), hover)
+  PushColor(ctx, reaper.ImGui_Col_FrameBgActive(), active)
+
+  PushColor(ctx, reaper.ImGui_Col_Header(), base)
+  PushColor(ctx, reaper.ImGui_Col_HeaderHovered(), hover)
+  PushColor(ctx, reaper.ImGui_Col_HeaderActive(), active)
+
+  PushColor(ctx, reaper.ImGui_Col_ResizeGrip(), base)
+  PushColor(ctx, reaper.ImGui_Col_ResizeGripHovered(), hover)
+  PushColor(ctx, reaper.ImGui_Col_ResizeGripActive(), active)
+
+  PushColor(ctx, reaper.ImGui_Col_TitleBg(), bg_dark)
+  PushColor(ctx, reaper.ImGui_Col_TitleBgActive(), header_bg)
+  PushColor(ctx, reaper.ImGui_Col_TitleBgCollapsed(), bg_dark)
+
+  PushColor(ctx, reaper.ImGui_Col_SliderGrab(), hover)
+  PushColor(ctx, reaper.ImGui_Col_SliderGrabActive(), base)
+
+  PushColor(ctx, reaper.ImGui_Col_Separator(), gray)
+  PushColor(ctx, reaper.ImGui_Col_SeparatorHovered(), hover)
+  PushColor(ctx, reaper.ImGui_Col_SeparatorActive(), active)
+
+  PushColor(ctx, reaper.ImGui_Col_TableRowBg(), base)
+  PushColor(ctx, reaper.ImGui_Col_TableRowBgAlt(), hover)
+  PushColor(ctx, reaper.ImGui_Col_TableHeaderBg(), active)
+
+  PushColor(ctx, reaper.ImGui_Col_PopupBg(), bg_popup)
+  PushColor(ctx, reaper.ImGui_Col_WindowBg(), bg_dark)
+end
+
+function cleanup_theme(ctx)
+  reaper.ImGui_PopStyleColor(ctx, 28)
+end
+
 local _, _, sectionID, cmdID = reaper.get_action_context()
 local ctx = reaper.ImGui_CreateContext('Relative CC Config')
 local FONT_SIZE = reaper.GetOS():match('Win') and 14 or 16
@@ -149,8 +207,10 @@ local function check_duplicate(entry, index)
 end
 
 local function loop()
-  local visible, open = reaper.ImGui_Begin(ctx, 'Relative CC Config Manager', true)
+  local visible, open = reaper.ImGui_Begin(ctx, 'Relative Midi Action Pairs Config', true)
+
   if visible then
+    apply_theme(ctx)
     reaper.ImGui_PushFont(ctx, FONT)
 
     -- Export Button
@@ -351,6 +411,7 @@ local function loop()
     end
 
     reaper.ImGui_PopFont(ctx)
+    cleanup_theme(ctx)
     reaper.ImGui_End(ctx)
   end
   if open and not reaper.ImGui_IsKeyDown(ctx, reaper.ImGui_Key_Escape()) then
