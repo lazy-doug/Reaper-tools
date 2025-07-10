@@ -38,6 +38,13 @@
                 <source main="main" file="Relative Midi Action Pairs Trigger.lua">https://raw.githubusercontent.com/lazy-doug/Reaper-tools/74843a7377b913824d822ca922160a73e93399c8/Relative%20Midi%20Action%20Pairs/Relative%20Midi%20Action%20Pairs%20Trigger.lua</source>
                 <source file="lib/json.lua">https://raw.githubusercontent.com/lazy-doug/Reaper-tools/3c25d157a66b8d4d5d5c9c107cec50700ae1e0b6/Relative%20Midi%20Action%20Pairs/lib/json.lua</source>
             </version>
+
+            <version name="1.5.0" author="Lazy-Doug">
+                <changelog><![CDATA[- Dependecy check]]></changelog>
+                <source main="main" file="Relative Midi Action Pairs Config.lua">https://raw.githubusercontent.com/lazy-doug/Reaper-tools/9b47bd9ad4b41528488a502f3c091ffad8cb7250/Relative%20Midi%20Action%20Pairs/Relative%20Midi%20Action%20Pairs%20Config.lua</source>
+                <source main="main" file="Relative Midi Action Pairs Trigger.lua">https://raw.githubusercontent.com/lazy-doug/Reaper-tools/74843a7377b913824d822ca922160a73e93399c8/Relative%20Midi%20Action%20Pairs/Relative%20Midi%20Action%20Pairs%20Trigger.lua</source>
+                <source file="lib/json.lua">https://raw.githubusercontent.com/lazy-doug/Reaper-tools/3c25d157a66b8d4d5d5c9c107cec50700ae1e0b6/Relative%20Midi%20Action%20Pairs/lib/json.lua</source>
+            </version>
         </reapack>
     </category>
 </index>
