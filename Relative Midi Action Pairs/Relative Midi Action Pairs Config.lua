@@ -1,9 +1,9 @@
 -- @description Relative Midi Action Pairs GUI Config
--- @version 1.4
+-- @version 1.5
 -- @author Lazy Doug
 -- @license MIT
 -- @changelog
---   + Config green theme
+--   + Dependency check
 -- @about
 --   # Relative CC Config GUI
 --   Graphical interface to configure MIDI CC routing and relative encoder behavior.
@@ -26,6 +26,7 @@ local json                  = require "json"
 local EXT_SECTION           = "Lazy-Doug RMAP"
 local CHANNELS_EXT_KEY      = "channels"
 local CONFIG_CH_EXT_SECTION = "Lazy-Doug RMAP config"
+local SCRIPT_NAME           = "Relative Midi Action Pairs Config.lua"
 
 ------------------------------------------------
 -- Shared Configuration I/O via ExtState
@@ -181,6 +182,29 @@ function cleanup_theme(ctx)
   reaper.ImGui_PopStyleColor(ctx, 28)
 end
 
+------------------------------------------------
+-- DEPENDENCY CHECK
+------------------------------------------------
+local ReaPack_exist = reaper.APIExists('ReaPack_BrowsePackages')
+if reaper.APIExists('ImGui_CreateContext') ~= true then
+  local confirm =
+      reaper.ShowMessageBox(
+        "Script requires \"ReaImGui: ReaScript binding for Dear ImGui\" with ReaPack and restart Reaper" ..
+        (ReaPack_exist and "\n\n Would you like to install it now?") or '',
+        SCRIPT_NAME,
+        (ReaPack_exist and 1 or 0)
+      )
+
+  if confirm == 1 then
+    reaper.ReaPack_BrowsePackages('ReaImGui: ReaScript binding for Dear ImGui')
+  end
+
+  return
+end
+
+------------------------------------------------
+-- GUI INIT
+------------------------------------------------
 local _, _, sectionID, cmdID = reaper.get_action_context()
 local ctx = reaper.ImGui_CreateContext('Relative CC Config')
 local FONT_SIZE = reaper.GetOS():match('Win') and 14 or 16
